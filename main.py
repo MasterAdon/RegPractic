@@ -1,5 +1,3 @@
-from typing import Any
-
 from pprint import pprint
 # читаем адресную книгу в формате CSV в список contacts_list
 import csv
@@ -31,7 +29,7 @@ for contact_list in contacts_list:
         contact_list1.append(contact)
     contacts_list1.append(contact_list1)
 
-#pprint(contacts_list1)
+# pprint(contacts_list1)
 # Форматируем ФИО в соответствии с заданием
 contacts_list2 = []
 for contact_list in contacts_list1:
@@ -44,10 +42,31 @@ for contact_list in contacts_list1:
             first_part_list.append('')
         contact_list1 = first_part_list + second_part
     contacts_list2.append(contact_list1)
-#pprint(contacts_list2)
+# pprint(contacts_list2)
 
+# Форматируем данные удаляя дублируещие записи по фамилии, имени, с сохранением данных.
+contacts_list3 = []
+contact_dict = {}  # Временная переменная
+for contact_list in contacts_list2:  # Создаем временный словарь
+    contact_dict_key = tuple(contact_list[0:2])
+    dict_contact = {contact_dict_key: contact_list[2:7]}
+    for contact_key, contact_value in dict_contact.items():  # Создаем временную переменную
+        contact_dict.setdefault(contact_key, []).append(contact_value)
 
+for contact_key1, contact_value1 in contact_dict.items():  # Обьединяем элементы словаря и создаем конечный список
+    if len(contact_value1) > 1:
+        if contact_value1[0][2] == '':
+            contact_value1[0][2] = contact_value1[1][2]
+            if contact_value1[0][4] == '':
+                contact_value1[0][4] = contact_value1[1][4]
+        del contact_value1[1]
+# pprint(contact_dict)  # Проверка сортировки и обработки
+    first_part = list(contact_key1)
+    for second_part in contact_value1:
+        contact_list = first_part + second_part
+        contacts_list3.append(contact_list)
+# pprint(contacts_list3)
 
 with open("phonebook.csv", "w") as f:
-  datawriter = csv.writer(f, delimiter=',')
-  datawriter.writerows(contacts_list2)
+    datawriter = csv.writer(f, delimiter=',')
+    datawriter.writerows(contacts_list3)
